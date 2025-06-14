@@ -5,7 +5,7 @@ import type { Metadata } from "next"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
-import "./globals.css"
+import "../styles/globals.css"
 
 const inter = Inter({ subsets: ["latin"] })
 
