@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import { Menu } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { ThemeToggle } from "@/components/theme-toggle"
+
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
 export function Navbar() {
@@ -75,9 +75,7 @@ export function Navbar() {
           </SheetContent>
         </Sheet>
         <div className="flex flex-1 items-center justify-end space-x-4">
-          <nav className="flex items-center">
-            <ThemeToggle />
-          </nav>
+          <nav className="flex items-center"></nav>
         </div>
       </div>
     </header>

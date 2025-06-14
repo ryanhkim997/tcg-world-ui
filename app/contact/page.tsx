@@ -5,16 +5,18 @@ export const metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="container px-4 md:px-6 py-12 md:py-24 lg:py-32">
+    <div className="container px-4 py-12 md:px-6 md:py-24 lg:py-32">
       <div className="flex flex-col items-center justify-center space-y-4 text-center">
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Contact Us</h1>
-          <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
+          <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+            Contact Us
+          </h1>
+          <p className="mx-auto max-w-[700px] text-gray-500 dark:text-gray-400 md:text-xl">
             We'd love to hear from you. Get in touch with our team.
           </p>
         </div>
       </div>
-      <div className="mx-auto max-w-lg mt-12">
+      <div className="mx-auto mt-12 max-w-lg">
         <form className="grid gap-6">
           <div className="grid gap-2">
             <label htmlFor="name" className="text-sm font-medium leading-none">
@@ -39,7 +41,10 @@ export default function ContactPage() {
             />
           </div>
           <div className="grid gap-2">
-            <label htmlFor="message" className="text-sm font-medium leading-none">
+            <label
+              htmlFor="message"
+              className="text-sm font-medium leading-none"
+            >
               Message
             </label>
             <textarea
