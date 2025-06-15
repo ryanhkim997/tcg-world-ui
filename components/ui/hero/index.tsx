@@ -1,6 +1,5 @@
 import HeroArrows from "@/public/assets/hero/hero-arrows.svg"
 import HeroLine from "@/public/assets/hero/hero-line.svg"
-import { cn } from "@/lib/utils"
 
 interface HeroProps {
   children: React.ReactNode
