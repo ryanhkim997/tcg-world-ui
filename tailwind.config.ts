@@ -1,4 +1,6 @@
 import type { Config } from "tailwindcss"
+import plugin from "tailwindcss/plugin"
+import tailwindThemeExtension from "./tailwind-theme-extension.json"
 
 const config: Config = {
   darkMode: ["class"],
@@ -10,10 +12,7 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      fontFamily: {
-        default: "Inter",
-        header: "Orbitron",
-      },
+      ...tailwindThemeExtension.theme.extend,
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -71,30 +70,54 @@ const config: Config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      fontSize: {},
+      fontFamily: {
+        default: "Inter",
+        header: "Orbitron",
+      },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        shimmer: {
+          "0%": {
+            transform: "translateX(-100%) translateY(-100%)",
+            opacity: "0",
           },
-          to: {
-            height: "0",
+          "50%": { opacity: "0.5" },
+          "100%": {
+            transform: "translateX(100%) translateY(100%)",
+            opacity: "0",
           },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        shimmer: "shimmer 1s ease-in-out",
+      },
+      textShadow: {
+        glow: "0 0 8px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.2)",
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    plugin(function ({ matchUtilities, theme }) {
+      matchUtilities(
+        {
+          "text-shadow": (value) => ({
+            textShadow: value,
+          }),
+        },
+        { values: theme("textShadow") }
+      )
+    }),
+  ],
 }
 export default config

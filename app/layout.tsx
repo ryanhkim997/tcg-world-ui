@@ -3,7 +3,8 @@ import type { Metadata } from "next"
 
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
-import "../styles/globals.css"
+import "@/styles/globals.css"
+import "@/styles/theme.css"
 
 export const metadata: Metadata = {
   title: "Next.js Boilerplate",
