@@ -3,61 +3,7 @@
 import React, { useEffect, useState, useRef } from "react"
 import Image from "next/image"
 import { motion, useAnimation } from "framer-motion"
-
-const cards = [
-  {
-    id: 961514,
-    name: "Lillie (Full Art) - SM - Ultra Prism (SM05)",
-    weight: 0.1,
-  },
-  {
-    id: 2572271,
-    name: "Misty's Favor (Full Art) - SM - Unified Minds (SM11)",
-    weight: 0.25,
-  },
-  {
-    id: 7800279,
-    name: "Lisia's Appeal - #246 - SV08: Surging Sparks (SV08)",
-    weight: 1,
-  },
-  {
-    id: 2336171,
-    name: "Marnie (Secret) - SWSH01: Sword & Shield Base Set (SWSH01)",
-    weight: 5,
-  },
-  {
-    id: 4637116,
-    name: "Cynthia's Ambition #GG60 Pokemon Crown Zenith",
-    weight: 20,
-  },
-  {
-    id: 7800267,
-    name: "Lisia's Appeal - 234/191 - SV08: Surging Sparks (SV08)",
-    weight: 5,
-  },
-  { id: 8244579, name: "Eri - SV: Prismatic Evolutions (PRE)", weight: 4 },
-  {
-    id: 7800265,
-    name: "Drayton - 232/191 - SV08: Surging Sparks (SV08)",
-    weight: 7,
-  },
-  { id: 8244585, name: "Raifort - SV: Prismatic Evolutions (PRE)", weight: 20 },
-  {
-    id: 8321670,
-    name: "Carmine (Poke Ball Pattern) - SV: Prismatic Evolutions (PRE)",
-    weight: 15,
-  },
-  {
-    id: 7418617,
-    name: "Briar - 132/142 - SV07: Stellar Crown (SV07)",
-    weight: 14,
-  },
-  {
-    id: 5809542,
-    name: "Erika's Invitation - #160 - SV: Scarlet & Violet 151",
-    weight: 9.65,
-  },
-]
+import { Pack } from "@/types/pack"
 
 const cardWidth = 100
 const gapWidth = 16 // from gap-x-4
@@ -71,17 +17,8 @@ function getRepeatedCards(
   return Array(repeat).fill(cards).flat()
 }
 
-function deterministicResult() {
-  const total = cards.reduce((sum, card) => sum + card.weight, 0)
-  let rnd = Math.random() * total
-  for (let i = 0; i < cards.length; i++) {
-    if (rnd < cards[i].weight) return cards[i]
-    rnd -= cards[i].weight
-  }
-  return cards[0]
-}
-
-export default function CardCarousel() {
+export function PackOpener({ pack }: { pack: Pack }) {
+  const { cards } = pack
   const containerRef = useRef<HTMLDivElement>(null)
   const controls = useAnimation()
   const [containerWidth, setContainerWidth] = useState(0)
@@ -153,6 +90,19 @@ export default function CardCarousel() {
         ease: [0.22, 1, 0.36, 1],
       },
     })
+  }
+
+  function deterministicResult() {
+    const total = cards.reduce(
+      (sum: number, card: { weight: number }) => sum + card.weight,
+      0
+    )
+    let rnd = Math.random() * total
+    for (let i = 0; i < cards.length; i++) {
+      if (rnd < cards[i].weight) return cards[i]
+      rnd -= cards[i].weight
+    }
+    return cards[0]
   }
 
   return (
