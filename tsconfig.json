@@ -21,13 +21,13 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@/assets": ["./public/assets"],
+      "@/types": ["./types"],
+      "@/public": ["./public"],
       "@/components": ["./components"],
       "@/lib": ["./lib"],
       "@/hooks": ["./hooks"],
       "@/app": ["./app"],
       "@/styles": ["./styles"],
-      "@/types": ["./types"],
       "@/utils": ["./utils"]
     }
   },
