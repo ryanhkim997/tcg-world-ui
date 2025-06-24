@@ -78,9 +78,8 @@ export function PackDisplay({ pack }: PackDisplayProps) {
           <div className="pointer-events-none absolute left-1/2 top-[68%] z-10 w-[80%] -translate-x-1/2">
             <video
               ref={videoRef}
-              src={`https://trainers-paradise.s3.us-west-1.amazonaws.com/pack-assets/portals/green.mp4`}
+              src={`https://tcg-world-assets.s3.us-west-1.amazonaws.com/pack-assets/portals/green.mp4`}
               muted
-              loop
               playsInline
               className="h-auto w-full object-cover"
             />
@@ -89,7 +88,7 @@ export function PackDisplay({ pack }: PackDisplayProps) {
           {/* Background Left Card */}
           <div className="absolute left-[30%] top-[40%] z-20 w-2/5 -translate-x-1/2 -translate-y-1/2 transform opacity-40 transition-all duration-300 group-hover:left-[25%] group-hover:-rotate-[18deg] group-hover:opacity-100">
             <Image
-              src={`https://trainers-paradise.s3.us-west-1.amazonaws.com/card-assets/${featuredCards[0].id}.png`}
+              src={`https://tcg-world-assets.s3.us-west-1.amazonaws.com/card-assets/${featuredCards[0].id}.png`}
               alt={featuredCards[0].name}
               width={250}
               height={350}
@@ -99,7 +98,7 @@ export function PackDisplay({ pack }: PackDisplayProps) {
           {/* Background Right Card */}
           <div className="absolute left-[70%] top-[40%] z-20 w-2/5 -translate-x-1/2 -translate-y-1/2 transform opacity-40 transition-all duration-300 group-hover:left-[75%] group-hover:rotate-[18deg] group-hover:opacity-100">
             <Image
-              src={`https://trainers-paradise.s3.us-west-1.amazonaws.com/card-assets/${featuredCards[2].id}.png`}
+              src={`https://tcg-world-assets.s3.us-west-1.amazonaws.com/card-assets/${featuredCards[2].id}.png`}
               alt={featuredCards[2].name}
               width={250}
               height={350}
@@ -109,7 +108,7 @@ export function PackDisplay({ pack }: PackDisplayProps) {
           {/* Center Card */}
           <div className="absolute left-1/2 top-[40%] z-30 w-1/2 -translate-x-1/2 -translate-y-1/2 transform transition-all duration-300 group-hover:scale-110">
             <Image
-              src={`https://trainers-paradise.s3.us-west-1.amazonaws.com/card-assets/${featuredCards[1].id}.png`}
+              src={`https://tcg-world-assets.s3.us-west-1.amazonaws.com/card-assets/${featuredCards[1].id}.png`}
               alt={featuredCards[1].name}
               width={250}
               height={350}
@@ -122,7 +121,7 @@ export function PackDisplay({ pack }: PackDisplayProps) {
           <p className="text-center">{name}</p>
           <div className="flex items-center justify-center gap-1 text-center">
             <Image
-              src={`https://trainers-paradise.s3.us-west-1.amazonaws.com/misc-assets/gem.png`}
+              src={`https://tcg-world-assets.s3.us-west-1.amazonaws.com/misc-assets/gem.png`}
               alt="gem"
               width={14}
               height={14}
