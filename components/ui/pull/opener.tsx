@@ -106,10 +106,10 @@ export function PackOpener({ pack }: { pack: Pack }) {
   }
 
   return (
-    <div className="mt-10 flex w-full flex-col items-center">
+    <div className="flex h-full w-full flex-col items-center">
       <div
         ref={containerRef}
-        className="relative w-full max-w-full overflow-hidden rounded-xl border"
+        className="relative w-full max-w-full overflow-hidden"
       >
         <motion.div
           className="flex gap-x-4"
@@ -120,7 +120,7 @@ export function PackOpener({ pack }: { pack: Pack }) {
           {repeatedCards.map((card, idx) => (
             <Image
               key={idx}
-              src={`https://trainers-paradise.s3.us-west-1.amazonaws.com/card-assets/${card.id}.png`}
+              src={`https://tcg-world-assets.s3.us-west-1.amazonaws.com/card-assets/${card.id}.png`}
               alt={card.name}
               width={cardWidth}
               height={150}
