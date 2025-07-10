@@ -4,34 +4,52 @@ import React, { useEffect, useState, useRef } from "react"
 import Image from "next/image"
 import { motion, useAnimation } from "framer-motion"
 import { Pack } from "@/types/pack"
+import { Card } from "@/types/card"
+import Selector from "@/public/assets/pull/selector.svg"
+import { PullListCard } from "../cards/pull-list-card"
+import { HexButton } from "./hex-button"
+import { pull } from "@/lib/api/pull"
 
-const cardWidth = 100
-const gapWidth = 16 // from gap-x-4
-const cardWidthWithGap = cardWidth + gapWidth
-const repeatCount = 20
-
-function getRepeatedCards(
-  cards: { id: number; name: string; weight: number }[],
-  repeat: number
-) {
+function getRepeatedCards(cards: Card[], repeat: number) {
   return Array(repeat).fill(cards).flat()
 }
 
-export function PackOpener({ pack }: { pack: Pack }) {
+export function PackOpener({
+  pack,
+  cardWidth,
+  gapPx = 2,
+  pulledCard,
+  setShowOpener,
+}: {
+  pack: Pack
+  cardWidth: number
+  gapPx?: number
+  pulledCard?: Card | null
+  setShowOpener: React.Dispatch<React.SetStateAction<boolean>>
+}) {
   const { cards } = pack
   const containerRef = useRef<HTMLDivElement>(null)
   const controls = useAnimation()
+  const [initialX, setInitialX] = useState(0)
   const [containerWidth, setContainerWidth] = useState(0)
-  const [visibleCards, setVisibleCards] = useState(3) // default fallback
-  const [resultCard, setResultCard] = useState<{
-    id: number
-    name: string
-    weight: number
-  } | null>(null)
+  const [resultCard, setResultCard] = useState<Card | null>(null)
+  const [repeatCount, setRepeatCount] = useState(20)
+  // index in repeatedCards that is currently centred
+  const [currentIndex, setCurrentIndex] = useState(0)
+
+  // Pixel distance from container left edge to selector center
+  const centerOffset = React.useMemo(
+    () => containerWidth / 2 - cardWidth / 2,
+    [containerWidth, cardWidth]
+  )
 
   const repeatedCards = React.useMemo(
     () => getRepeatedCards(cards, repeatCount),
-    []
+    [cards]
+  )
+  const middleIndex = React.useMemo(
+    () => Math.floor(repeatedCards.length / 2),
+    [repeatedCards]
   )
 
   // Update containerWidth on mount and window resize
@@ -46,99 +64,170 @@ export function PackOpener({ pack }: { pack: Pack }) {
     return () => window.removeEventListener("resize", updateWidth)
   }, [])
 
-  // Update visibleCards when containerWidth changes
+  // Reset animation when pack changes
+  useEffect(() => {
+    if (containerWidth > 0) {
+      const slotWidth = cardWidth + gapPx
+      const startOffset = -(middleIndex * slotWidth - centerOffset)
+      setInitialX(startOffset)
+      setCurrentIndex(middleIndex)
+      controls.set({ x: startOffset })
+    }
+  }, [pack.id, containerWidth])
+
   useEffect(() => {
     if (containerWidth) {
-      setVisibleCards(Math.floor(containerWidth / cardWidthWithGap))
+      const slotWidth = cardWidth + gapPx
+      const startOffset = -(middleIndex * slotWidth - centerOffset)
+      setInitialX(startOffset)
+      setCurrentIndex(middleIndex)
+      controls.set({ x: startOffset })
     }
-  }, [containerWidth])
+  }, [containerWidth, cardWidth, gapPx, centerOffset, repeatedCards, controls])
 
-  // Calculate center offset for animation
-  const centerOffset = ((visibleCards - 1) / 2) * cardWidthWithGap
+  useEffect(() => {
+    if (pulledCard && containerWidth > 0) {
+      spin(pulledCard)
+    }
+  }, [pulledCard, containerWidth])
 
+  // Find the index where the carousel should stop such that we perform
+  // `loopsAhead` full cycles *after* the current position before landing on
+  // the desired card.
   function getStopIndex(
-    repeatedCards: { id: number; name: string; weight: number }[],
-    resultCard: { id: number; name: string; weight: number }
+    current: number,
+    targetCardId: number,
+    loopsAhead: number,
+    cardsPerSet: number
   ) {
-    const middle = Math.floor(repeatedCards.length / 2)
-    let closestIndex = middle
-    let minDistance = repeatedCards.length
-
-    for (let i = 0; i < repeatedCards.length; i++) {
-      if (repeatedCards[i].id === resultCard.id) {
-        const distance = Math.abs(i - middle)
-        if (distance < minDistance) {
-          minDistance = distance
-          closestIndex = i
-        }
-      }
-    }
-    return closestIndex
+    const base = current + loopsAhead * cardsPerSet
+    // The card order repeats every `cardsPerSet`
+    return base + cards.findIndex((c) => c.id === targetCardId)
   }
 
-  const spin = () => {
-    const result = deterministicResult()
-    setResultCard(result)
+  const spin = async (target: Card) => {
+    const loopsAhead = 3 // a few full cycles for effect
+    const cardsPerSet = cards.length
+    setRepeatCount(repeatCount + 10)
+    console.log(target)
 
-    const stopIndex = getStopIndex(repeatedCards, result)
-    const offset = stopIndex * cardWidthWithGap - centerOffset
+    // Reset the result card while spinning
+    setResultCard(null)
 
-    controls.start({
-      x: -offset,
-      transition: {
-        duration: 3,
-        ease: [0.22, 1, 0.36, 1],
-      },
-    })
-  }
+    // Calculate the target position in the current set of cards
+    const targetPosInSet = cards.findIndex((c) => c.id === target.id)
 
-  function deterministicResult() {
-    const total = cards.reduce(
-      (sum: number, card: { weight: number }) => sum + card.weight,
-      0
-    )
-    let rnd = Math.random() * total
-    for (let i = 0; i < cards.length; i++) {
-      if (rnd < cards[i].weight) return cards[i]
-      rnd -= cards[i].weight
-    }
-    return cards[0]
+    // Calculate the absolute stop index in the repeated cards array
+    const stopIndex =
+      Math.floor(currentIndex / cardsPerSet) * cardsPerSet +
+      loopsAhead * cardsPerSet +
+      targetPosInSet
+
+    const slotWidth = cardWidth + gapPx
+    const offset = stopIndex * slotWidth - centerOffset
+    const finalX = Math.round(-offset)
+
+    // Reset animation to current position before starting
+    const currentX = -currentIndex * slotWidth + centerOffset
+    controls.set({ x: currentX })
+
+    // Animate to the new position
+    await controls.start({ x: finalX }, {
+      type: "spring",
+      stiffness: 70,
+      damping: 50,
+      bounce: 0,
+      overshootClamping: true,
+      restDelta: 0.1,
+    } as any)
+
+    // Update the current index and set the result card
+    setCurrentIndex(stopIndex)
+    setResultCard(target)
   }
 
   return (
-    <div className="flex h-full w-full flex-col items-center">
-      <div
-        ref={containerRef}
-        className="relative w-full max-w-full overflow-hidden"
-      >
+    <div className="flex h-full w-full flex-col items-center justify-center gap-6">
+      <Selector />
+      <div ref={containerRef} className="relative w-full overflow-hidden">
+        {/* Gradient overlays */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-36 bg-gradient-to-r from-black to-black/0" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-36 bg-gradient-to-l from-black to-black/0" />
+
         <motion.div
-          className="flex gap-x-4"
+          className="flex"
           animate={controls}
-          initial={{ x: 0 }}
-          style={{ willChange: "transform" }}
+          initial={{ x: initialX }}
+          style={{ columnGap: gapPx, willChange: "transform" }}
         >
           {repeatedCards.map((card, idx) => (
-            <Image
-              key={idx}
-              src={`https://tcg-world-assets.s3.us-west-1.amazonaws.com/card-assets/${card.id}.png`}
-              alt={card.name}
-              width={cardWidth}
-              height={150}
-              className="object-contain"
-            />
+            <div key={idx} className="flex-none" style={{ width: cardWidth }}>
+              <PullListCard card={card} />
+            </div>
           ))}
         </motion.div>
       </div>
-      <button
-        onClick={spin}
-        className="mt-6 rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
-      >
-        Spin
-      </button>
-      {resultCard && (
-        <div className="mt-4 text-xl font-bold text-green-600">
-          You got: {resultCard.name}
+      {resultCard ? (
+        <div className="flex flex-col items-center gap-2">
+          <span className="text-md">{resultCard.name}</span>
+          <div className="flex items-center justify-center gap-1">
+            <Image
+              src={`https://tcg-world-assets.s3.us-west-1.amazonaws.com/misc-assets/gem.png`}
+              alt="gem"
+              width={14}
+              height={14}
+            />
+            <span className="text-md">{resultCard.price}</span>
+          </div>
         </div>
+      ) : (
+        <Selector className="rotate-180" />
+      )}
+      {resultCard ? (
+        <div className="flex w-full justify-center gap-2">
+          <HexButton color="#7A7A7A" onClick={() => setShowOpener(false)}>
+            Close
+          </HexButton>
+          <HexButton
+            color="#8B68FB"
+            onClick={async () => {
+              const result = await pull({
+                userId: "demo",
+                packId: String(pack.id),
+                clientSeed: "demo-seed",
+                nonce: Date.now(),
+              })
+
+              spin(result.pulledCard)
+              setShowOpener(true)
+            }}
+          >
+            <div className="flex items-center justify-center gap-1">
+              <span>Open again </span>
+              <Image
+                src={`https://tcg-world-assets.s3.us-west-1.amazonaws.com/misc-assets/gem.png`}
+                alt="gem"
+                width={14}
+                height={14}
+              />
+              <span className="text-md">{pack.price}</span>
+            </div>
+          </HexButton>
+          <HexButton color="#7A7A7A">
+            <div className="flex items-center justify-center gap-1">
+              <span>Sell for </span>
+              <Image
+                src={`https://tcg-world-assets.s3.us-west-1.amazonaws.com/misc-assets/gem.png`}
+                alt="gem"
+                width={14}
+                height={14}
+              />
+              <span className="text-md">{resultCard?.price}</span>
+            </div>
+          </HexButton>
+        </div>
+      ) : (
+        <HexButton color="#7A7A7A">Skip</HexButton>
       )}
     </div>
   )

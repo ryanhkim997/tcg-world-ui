@@ -1,3 +1,11 @@
-export function PacksGrid({ children }: { children: React.ReactNode }) {
-  return <div className="grid grid-cols-6">{children}</div>
+import { cn } from "@/lib/utils"
+
+export function PacksGrid({
+  children,
+  className,
+}: {
+  children: React.ReactNode
+  className?: string
+}) {
+  return <div className={cn("grid grid-cols-6", className)}>{children}</div>
 }
