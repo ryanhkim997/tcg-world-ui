@@ -87,7 +87,7 @@ const mockPacks = [
   },
 ]
 
-// trigger development deploy 1
+// trigger deploy 1
 
 export default function Home() {
   return (
