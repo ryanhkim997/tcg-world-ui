@@ -17,6 +17,7 @@ export async function pull({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId, packId, clientSeed, nonce }),
     })
+    // trigger dev deploy
     const data = await res.json()
     return data
   } catch (error) {
