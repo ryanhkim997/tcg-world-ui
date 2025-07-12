@@ -87,8 +87,6 @@ const mockPacks = [
   },
 ]
 
-// trigger deploy 3
-
 export default function Home() {
   return (
     <div className="flex w-full flex-col gap-4">
