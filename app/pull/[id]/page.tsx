@@ -12,6 +12,8 @@ import Image from "next/image"
 import { SectionDivider } from "@/components/ui/section-divider"
 import { PackListCard } from "@/components/ui/cards/pack-list-card"
 import { PacksGrid } from "@/components/ui/grids"
+import { useQuery } from "@tanstack/react-query"
+import { findPackById } from "@/lib/api/packs"
 
 const mockPackData = {
   id: 1,
@@ -130,10 +132,21 @@ const mockPackData = {
 
 export default function PullPage() {
   const { id } = useParams()
-
-  const pack = mockPackData // TODO: fetch from API
   const [showOpener, setShowOpener] = useState(false)
   const [pulledCard, setPulledCard] = useState<Card | null>(null)
+
+  const {
+    data: pack,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["packs", id], // page number as param
+    queryFn: () => findPackById(id as string),
+  })
+
+  if (isLoading) return <div>Loading...</div>
+  if (error) return <div>Error: {error.message}</div>
+
   return (
     <div className="flex w-full flex-col items-center">
       <div className="relative flex w-full flex-col">
@@ -151,8 +164,8 @@ export default function PullPage() {
               {/* Background Left Card */}
               <div className="absolute left-[25%] top-1/2 z-10 w-[35%] -translate-x-1/2 -translate-y-1/2 transform">
                 <Image
-                  src={`https://tcg-world-assets.s3.us-west-1.amazonaws.com/card-assets/${pack.featuredCards[0].id}.png`}
-                  alt={pack.featuredCards[0].name}
+                  src={pack.featuredCards[0].imageUrl}
+                  alt={pack.featuredCards[0].cardName}
                   width={300}
                   height={420}
                   className="h-auto w-full rounded-md"
@@ -161,8 +174,8 @@ export default function PullPage() {
               {/* Background Right Card */}
               <div className="absolute left-[75%] top-1/2 z-10 w-[35%] -translate-x-1/2 -translate-y-1/2 transform">
                 <Image
-                  src={`https://tcg-world-assets.s3.us-west-1.amazonaws.com/card-assets/${pack.featuredCards[2].id}.png`}
-                  alt={pack.featuredCards[2].name}
+                  src={pack.featuredCards[2].imageUrl}
+                  alt={pack.featuredCards[2].cardName}
                   width={300}
                   height={420}
                   className="h-auto w-full rounded-md"
@@ -171,8 +184,8 @@ export default function PullPage() {
               {/* Center Card */}
               <div className="absolute left-1/2 top-1/2 z-20 w-2/5 -translate-x-1/2 -translate-y-1/2 transform shadow-[0px_0px_31px_0px_rgba(0,0,0,0.90)]">
                 <Image
-                  src={`https://tcg-world-assets.s3.us-west-1.amazonaws.com/card-assets/${pack.featuredCards[1].id}.png`}
-                  alt={pack.featuredCards[1].name}
+                  src={pack.featuredCards[1].imageUrl}
+                  alt={pack.featuredCards[1].cardName}
                   width={300}
                   height={420}
                   className="h-auto w-full rounded-md"
@@ -188,7 +201,7 @@ export default function PullPage() {
                 try {
                   const result = await pull({
                     userId: "demo",
-                    packId: String(pack.id),
+                    packId: pack.id,
                     clientSeed: "demo-seed",
                     nonce: Date.now(),
                   })
@@ -232,8 +245,8 @@ export default function PullPage() {
         <SectionDivider />
         <h2 className="font-header text-xl font-bold">In this pack:</h2>
         <PacksGrid className="gap-2">
-          {pack.cards.map((card) => (
-            <PackListCard key={card.id} card={card} />
+          {pack.cards.map((card: Card, idx: number) => (
+            <PackListCard key={`${card.id}-${idx}`} card={card} />
           ))}
         </PacksGrid>
       </div>
