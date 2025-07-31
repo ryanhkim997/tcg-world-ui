@@ -1,10 +1,10 @@
 import type React from "react"
 import type { Metadata } from "next"
-
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import "@/styles/globals.css"
 import "@/styles/theme.css"
+import { Providers } from "@/components/providers"
 
 export const metadata: Metadata = {
   title: "Next.js Boilerplate",
@@ -22,9 +22,11 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <div className="flex min-h-screen flex-col">
-          <Navbar />
-          {children}
-          <Footer />
+          <Providers>
+            <Navbar />
+            {children}
+            <Footer />
+          </Providers>
         </div>
       </body>
     </html>

@@ -1,14 +1,13 @@
 import Image from "next/image"
 import { Card } from "@/types/card"
-import { formatPrice } from "@/lib/utils"
 
 export const PullListCard = ({ card }: { card: Card }) => {
   return (
     <div className="flex w-full flex-col bg-blue-700">
       <div className="flex w-full flex-col items-center px-4 py-3">
         <Image
-          src={`https://tcg-world-assets.s3.us-west-1.amazonaws.com/card-assets/${card.id}.png`}
-          alt={card.name}
+          src={card.imageUrl}
+          alt={card.cardName}
           width={116}
           height={0}
           className="w-full"
@@ -21,7 +20,7 @@ export const PullListCard = ({ card }: { card: Card }) => {
           width={14}
           height={14}
         />
-        <span className="text-xs font-bold">{formatPrice(card.price)}</span>
+        <span className="text-xs font-bold">{card.currentPriceInGems}</span>
       </div>
     </div>
   )
