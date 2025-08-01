@@ -1,9 +1,19 @@
 import Image from "next/image"
 import { Card } from "@/types/card"
+import { convertSnakeToKebab } from "@/lib/utils"
 
 export const PullListCard = ({ card }: { card: Card }) => {
+  const tierImageUrl = `https://tcg-world-assets.s3.us-west-1.amazonaws.com/misc-assets/${convertSnakeToKebab(card.tier)}.png`
+
   return (
-    <div className="flex w-full flex-col bg-blue-700">
+    <div
+      className="relative flex w-full flex-col overflow-hidden"
+      style={{
+        backgroundImage: `url(${tierImageUrl})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
       <div className="flex w-full flex-col items-center px-4 py-3">
         <Image
           src={card.imageUrl}

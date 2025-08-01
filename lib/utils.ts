@@ -12,3 +12,7 @@ export function formatPrice(price: number): string {
 export function formatWeight(probability: number): string {
   return probability.toFixed(2) + "%"
 }
+
+export function convertSnakeToKebab(str: string): string {
+  return str.replace(/_/g, "-").toLowerCase()
+}
