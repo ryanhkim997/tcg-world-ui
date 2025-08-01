@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import { Menu } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import HeaderLogo from "@/public/assets/home/header-logo.svg"
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
@@ -18,14 +19,14 @@ export function Navbar() {
       active: pathname === "/",
     },
     {
-      href: "/about",
-      label: "About",
-      active: pathname === "/about",
+      href: "/inventory",
+      label: "My Inventory",
+      active: pathname === "/inventory",
     },
     {
-      href: "/contact",
-      label: "Contact",
-      active: pathname === "/contact",
+      href: "/about",
+      label: "How it works",
+      active: pathname === "/about",
     },
   ]
 
@@ -34,7 +35,7 @@ export function Navbar() {
       <div className="container flex h-16 items-center">
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <span className="font-bold">Next.js Boilerplate</span>
+            <HeaderLogo />
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
             {routes.map((route) => (
@@ -59,7 +60,7 @@ export function Navbar() {
           </SheetTrigger>
           <SheetContent side="left">
             <Link href="/" className="flex items-center">
-              <span className="font-bold">Next.js Boilerplate</span>
+              <HeaderLogo />
             </Link>
             <nav className="mt-6 flex flex-col space-y-4">
               {routes.map((route) => (

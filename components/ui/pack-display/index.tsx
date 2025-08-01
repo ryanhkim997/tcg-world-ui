@@ -12,7 +12,6 @@ type PackDisplayProps = {
 export function PackDisplay({ pack }: PackDisplayProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const reverseIntervalRef = useRef<number | null>(null)
-  console.log(pack)
   const { featuredCards, name, price } = pack
 
   useEffect(() => {

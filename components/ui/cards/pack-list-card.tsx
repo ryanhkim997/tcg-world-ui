@@ -1,11 +1,20 @@
 import Image from "next/image"
 import ContentDivider from "@/public/assets/card/content-divider.svg"
 import { Card } from "@/types/card"
-import { formatWeight } from "@/lib/utils"
+import { convertSnakeToKebab, formatWeight } from "@/lib/utils"
 
 export function PackListCard({ card }: { card: Card }) {
+  const tierImageUrl = `https://tcg-world-assets.s3.us-west-1.amazonaws.com/misc-assets/${convertSnakeToKebab(card.tier)}.png`
+
   return (
-    <div className="flex flex-col rounded-xl bg-blue-400">
+    <div
+      className="relative flex flex-col overflow-hidden rounded-xl"
+      style={{
+        backgroundImage: `url(${tierImageUrl})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
       <div className="flex flex-col items-center gap-y-4 px-4 pb-2 pt-4">
         <Image
           src={card.imageUrl}
