@@ -91,25 +91,10 @@ export function PackOpener({
     }
   }, [pulledCard, containerWidth])
 
-  // Find the index where the carousel should stop such that we perform
-  // `loopsAhead` full cycles *after* the current position before landing on
-  // the desired card.
-  function getStopIndex(
-    current: number,
-    targetCardId: number,
-    loopsAhead: number,
-    cardsPerSet: number
-  ) {
-    const base = current + loopsAhead * cardsPerSet
-    // The card order repeats every `cardsPerSet`
-    return base + cards.findIndex((c) => c.id === targetCardId)
-  }
-
   const spin = async (target: Card) => {
     const loopsAhead = 3 // a few full cycles for effect
     const cardsPerSet = cards.length
     setRepeatCount(repeatCount + 10)
-    console.log(target)
 
     // Reset the result card while spinning
     setResultCard(null)
@@ -169,7 +154,7 @@ export function PackOpener({
       </div>
       {resultCard ? (
         <div className="flex flex-col items-center gap-2">
-          <span className="text-md">{resultCard.name}</span>
+          <span className="text-md">{resultCard.cardName}</span>
           <div className="flex items-center justify-center gap-1">
             <Image
               src={`https://tcg-world-assets.s3.us-west-1.amazonaws.com/misc-assets/gem.png`}
@@ -177,7 +162,7 @@ export function PackOpener({
               width={14}
               height={14}
             />
-            <span className="text-md">{resultCard.price}</span>
+            <span className="text-md">{resultCard.currentPriceInGems}</span>
           </div>
         </div>
       ) : (
@@ -222,7 +207,7 @@ export function PackOpener({
                 width={14}
                 height={14}
               />
-              <span className="text-md">{resultCard?.price}</span>
+              <span className="text-md">{resultCard?.currentPriceInGems}</span>
             </div>
           </HexButton>
         </div>

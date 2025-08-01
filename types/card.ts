@@ -1,7 +1,8 @@
 export type Card = {
-  id: any
-  name: string
+  id: string
+  cardName: string
+  currentPriceInGems: number
+  currentPrice: number
   weight: number
-  price: number
-  probability: number
+  imageUrl: string
 }

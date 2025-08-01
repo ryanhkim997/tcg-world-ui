@@ -9,6 +9,6 @@ export function formatPrice(price: number): string {
   return price.toFixed(2)
 }
 
-export function formatProbability(probability: number): string {
+export function formatWeight(probability: number): string {
   return probability.toFixed(2) + "%"
 }

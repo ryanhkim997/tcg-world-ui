@@ -12,7 +12,7 @@ type PackDisplayProps = {
 export function PackDisplay({ pack }: PackDisplayProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const reverseIntervalRef = useRef<number | null>(null)
-
+  console.log(pack)
   const { featuredCards, name, price } = pack
 
   useEffect(() => {
@@ -88,8 +88,8 @@ export function PackDisplay({ pack }: PackDisplayProps) {
           {/* Background Left Card */}
           <div className="absolute left-[30%] top-[40%] z-20 w-2/5 -translate-x-1/2 -translate-y-1/2 transform opacity-40 transition-all duration-300 group-hover:left-[25%] group-hover:-rotate-[18deg] group-hover:opacity-100">
             <Image
-              src={`https://tcg-world-assets.s3.us-west-1.amazonaws.com/card-assets/${featuredCards[0].id}.png`}
-              alt={featuredCards[0].name}
+              src={featuredCards[1].imageUrl ?? ""}
+              alt={featuredCards[1].cardName ?? ""}
               width={250}
               height={350}
               className="h-auto w-full rounded-md"
@@ -98,8 +98,8 @@ export function PackDisplay({ pack }: PackDisplayProps) {
           {/* Background Right Card */}
           <div className="absolute left-[70%] top-[40%] z-20 w-2/5 -translate-x-1/2 -translate-y-1/2 transform opacity-40 transition-all duration-300 group-hover:left-[75%] group-hover:rotate-[18deg] group-hover:opacity-100">
             <Image
-              src={`https://tcg-world-assets.s3.us-west-1.amazonaws.com/card-assets/${featuredCards[2].id}.png`}
-              alt={featuredCards[2].name}
+              src={featuredCards[2].imageUrl ?? ""}
+              alt={featuredCards[2].cardName ?? ""}
               width={250}
               height={350}
               className="h-auto w-full rounded-md"
@@ -108,8 +108,8 @@ export function PackDisplay({ pack }: PackDisplayProps) {
           {/* Center Card */}
           <div className="absolute left-1/2 top-[40%] z-30 w-1/2 -translate-x-1/2 -translate-y-1/2 transform transition-all duration-300 group-hover:scale-110">
             <Image
-              src={`https://tcg-world-assets.s3.us-west-1.amazonaws.com/card-assets/${featuredCards[1].id}.png`}
-              alt={featuredCards[1].name}
+              src={featuredCards[0].imageUrl ?? ""}
+              alt={featuredCards[0].cardName ?? ""}
               width={250}
               height={350}
               className="h-auto w-full rounded-md"
