@@ -9,6 +9,7 @@ export default async function Home() {
   try {
     const response = await findPacks({ page: 1, limit: 10 })
     const packs = response?.data || []
+    console.log(packs, response)
 
     return (
       <div className="flex w-full flex-col gap-4">
