@@ -1,12 +1,10 @@
 import { Pagination } from "@/types/pagination"
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL
-
 export async function findAllPackCards(pagination: Pagination) {
   const { page, limit } = pagination
   try {
     const res = await fetch(
-      `${API_BASE}/pack-cards?page=${page}&limit=${limit}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/pack-cards?page=${page}&limit=${limit}`,
       {
         method: "GET",
         headers: { "Content-Type": "application/json" },

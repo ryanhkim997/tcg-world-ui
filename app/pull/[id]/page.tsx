@@ -6,27 +6,29 @@ import { useParams } from "next/navigation"
 import HeroDivider from "@/public/assets/pull/hero-divider.svg"
 import Lottie from "lottie-react"
 import pullPageLottie from "@/animations/pull-page-lottie.json"
-import { pull } from "@/lib/api/pull"
+import { usePullCard } from "@/lib/hooks/use-pull"
 import { Card } from "@/types/card"
 import Image from "next/image"
 import { SectionDivider } from "@/components/ui/section-divider"
 import { PackListCard } from "@/components/ui/cards/pack-list-card"
 import { PacksGrid } from "@/components/ui/grids"
-import { useQuery } from "@tanstack/react-query"
-import { findPackById } from "@/lib/api/packs"
+import { usePackById } from "@/lib/hooks/use-pack-by-id"
 
 export default function PullPage() {
   const { id } = useParams()
   const [showOpener, setShowOpener] = useState(false)
   const [pulledCard, setPulledCard] = useState<Card | null>(null)
 
-  const {
-    data: pack,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["packs", id], // page number as param
-    queryFn: () => findPackById(id as string),
+  const { data: pack, isLoading, error } = usePackById(id as string)
+
+  const { mutate, isPending } = usePullCard({
+    onSuccess: (data) => {
+      setPulledCard(data.pulledCard)
+      setShowOpener(true)
+    },
+    onError: (error) => {
+      console.error("Pull failed:", error)
+    },
   })
 
   if (isLoading) return <div>Loading...</div>
@@ -81,21 +83,14 @@ export default function PullPage() {
           <div className="flex w-full items-center justify-center">
             <HexButton
               color="#8B68FB"
-              onClick={async () => {
-                // trigger pull API then show modal
-                try {
-                  const result = await pull({
-                    userId: "demo",
-                    packId: pack.id,
-                    clientSeed: "demo-seed",
-                    nonce: Date.now(),
-                  })
-                  setPulledCard(result.pulledCard)
-                  setShowOpener(true)
-                } catch (e) {
-                  console.error("pull failed", e)
-                }
-              }}
+              onClick={() =>
+                mutate({
+                  userId: "demo",
+                  packId: pack.id,
+                  clientSeed: "demo-seed",
+                  nonce: Date.now(),
+                })
+              }
             >
               <div className="flex items-center gap-3">
                 <p className="whitespace-nowrap">Open pack</p>
