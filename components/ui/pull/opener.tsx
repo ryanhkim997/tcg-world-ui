@@ -8,7 +8,7 @@ import { Card } from "@/types/card"
 import Selector from "@/public/assets/pull/selector.svg"
 import { PullListCard } from "../cards/pull-list-card"
 import { HexButton } from "./hex-button"
-import { pull } from "@/lib/api/pull"
+import { usePullCard } from "@/lib/hooks/use-pull"
 
 function getRepeatedCards(cards: Card[], repeat: number) {
   return Array(repeat).fill(cards).flat()
@@ -36,6 +36,16 @@ export function PackOpener({
   const [repeatCount, setRepeatCount] = useState(20)
   // index in repeatedCards that is currently centred
   const [currentIndex, setCurrentIndex] = useState(0)
+
+  // Use the pull card mutation hook
+  const { mutate: pullCard } = usePullCard({
+    onSuccess: (data) => {
+      spin(data.pulledCard)
+    },
+    onError: (error) => {
+      console.error("Pull failed:", error)
+    },
+  })
 
   // Pixel distance from container left edge to selector center
   const centerOffset = React.useMemo(
@@ -175,16 +185,13 @@ export function PackOpener({
           </HexButton>
           <HexButton
             color="#8B68FB"
-            onClick={async () => {
-              const result = await pull({
+            onClick={() => {
+              pullCard({
                 userId: "demo",
                 packId: String(pack.id),
                 clientSeed: "demo-seed",
                 nonce: Date.now(),
               })
-
-              spin(result.pulledCard)
-              setShowOpener(true)
             }}
           >
             <div className="flex items-center justify-center gap-1">
